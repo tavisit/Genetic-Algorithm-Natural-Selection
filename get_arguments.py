@@ -53,7 +53,7 @@ def get_arguments():
     for current_argument, current_value in arguments:
         if current_argument in ('-h', '--help'):  # help argument is parsed and display information
             print('\n\nStart the program in the following order, where [-c] is optional')
-            print('python Houses_prices.py [-p nr] [-g nr] [-l nr] [-w nr] [n] [a opt] -f location_input\n')
+            print('python Houses_prices.py [-p nr] [-g nr] [-l nr] [-w nr] [-n] [-a opt] -f location_input\n')
             print('-p / --pop           | set the initial population, default 10')
             print('-g / --gen           | set the number of generations, default 10')
             print('-l / --length        | set the environment length, default 400')
