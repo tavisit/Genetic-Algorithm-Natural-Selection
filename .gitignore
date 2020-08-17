@@ -1,4 +1,2 @@
-
-__pycache__/Individual.cpython-38.pyc
-__pycache__/get_arguments.cpython-38.pyc
-__pycache__/DataAnalysisModule.cpython-38.pyc
+# ignore the _pychache_
+*.pyc
