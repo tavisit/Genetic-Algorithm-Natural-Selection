@@ -220,10 +220,11 @@ def visual_analysis_df(file_path='natural_selection_data.csv',
     plt.title(subtitle)
     plt.hist(np.log(data_frame.Size), color='green')
 
+    data_frame["Average_Gene"] = data_frame[data_frame.columns[6:-2]].mean(axis=1)
     fig.add_subplot(224)
-    subtitle = 'Skew of Senses after logarithm is ' + str(np.log(data_frame.Visual + data_frame.Auditory).skew())
+    subtitle = 'Skew of Genes after logarithm is ' + str(np.log(data_frame.Average_Gene).skew())
     plt.title(subtitle)
-    plt.hist(np.log(data_frame.Visual + data_frame.Auditory), color='orange')
+    plt.hist(np.log(data_frame.Average_Gene), color='orange')
 
     if d_analysis_option == 's':
         plt.savefig('Images/' + file_path[-5] + str(nr_crt) + '_plot.png')
@@ -249,6 +250,8 @@ def visual_analysis_df(file_path='natural_selection_data.csv',
         plt.show()
 
     # feature ranking plot
+    print(data_frame.columns[6:-3])
+    data_frame_temp = data_frame.drop(data_frame.iloc[:,6:-3], inplace = True, axis = 1)
     data_frame_temp = data_frame.drop(['Nr_Gen', 'Born_Generation'], axis=1)
     plt = data_analysis.feature_ranking_plotting(data_frame_temp, 'Fitness', 5)
     plt.suptitle('Fitness important features')
