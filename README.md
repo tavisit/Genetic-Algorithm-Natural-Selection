@@ -1,6 +1,8 @@
 # Genetic Algorithm Natural Selection
 
-This algorithm simulates a population of individuals with 6 initial traits, mutates the population though generations and visualizes real behaviourism of the society. It also saves and draws some plots to ease the burden of information visualization
+This algorithm simulates a population of individuals with 4 initial traits and multiple secondary genes. The algorithm mutates the population though generations and visualizes real behaviourism of the society. It also saves and draws some plots to ease the burden of information visualization.
+
+If you want, the modules Individual.py and DataAnalysisModule.py can be used as standalone libraries to be embedded in your personal projects.
 
 ### Nota Bene
 
@@ -95,7 +97,7 @@ The main algorithm is split between 4 main modules and these are:
 
 ### Initial idea
 
-Make a mathematical explanation of the universal population's asymptotic logistic growth and implement said algorithms in a working program
+Make a mathematical explanation of the universal population's asymptotic logistic growth and implement said algorithms in a working program.
 
 The genetic algorithm cycle is as the following:
 
@@ -135,7 +137,9 @@ The equation that allows the individuals to divide and increase the population. 
 
 ### Python Implementation
 
-The programming language used will be pthon, because it has many useful frameworks and libraries.
+The programming language used will be python, because it has many useful frameworks and libraries.
+
+The individual's probability of secondary gene mutation, the variable ```probability_gene_modification``` from the module Individual.py can be modified
 
 The program has the following stages:
 * calculate fitness and delete unfit individuals:
