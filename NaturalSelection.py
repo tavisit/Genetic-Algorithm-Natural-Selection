@@ -1,7 +1,7 @@
 #######################################################################################################################
 # libraries section
 import copy
-from csv import writer
+import os
 import random
 from datetime import datetime
 
@@ -16,46 +16,50 @@ import DataAnalysisModule
 #######################################################################################################################
 # functions implementation
 
-# the population crowdness in the environment
-# as the population increases, the probability of dividing
-# lowers as the population takes more space
-# environment is the actual surface calculated in (population.size) metric **2
-def crowding_effect(population=Individual.Individual(),
-                    environment=(Individual.Individual().size, Individual.Individual().size)):
-    # define the space occupied by the population
-    crowd_effect = 1
-    pop_space = 0
-    for person in population:
-        pop_space += person.size ** 2
-
-    return pop_space / (environment[0] * environment[1]) * 10
-
-
-def random_start_population(seed):
-    indiv = Individual.Individual()
-    indiv = indiv.mutation(indiv, 0)
-    return indiv
-
 
 def natural_selection_algorithm(start_pop=10,
                                 generations=10,
                                 environment=(400, 400),
                                 file_path='natural_selection_data.csv'):
+    while os.path.exists(file_path):
+        actual_path = file_path[:-4]
+        terminator = file_path[-4:]
+        actual_path += '_copy'
+        actual_path +=terminator
+        file_path = actual_path
+
     print('\n\n\n\n')
     print('#' * 100)
     print('Natural selection Algorithm')
     print('#' * 100)
 
+    genes = [-98, -69, -65, -46, 49, 50, 74, 91, 117, 178]
+    print('The initial set of random genes( list of numbers) or press x to start\n')
+    try:
+        nr = int(input())
+        genes = []
+        while(type(nr) == int):
+            genes.append(nr)
+            nr = int(input())
+    except:
+        pass
+
+    print('\n\n')
+
     # initialize the population
     population = []
     for i in range(start_pop):
-        population.append(random_start_population(random.seed(datetime.now())))
+        ind = Individual.random_start_population(genes)
+        population.append(ind)
 
     # print the current generation
     print('Generation {:>3}, population is {:>4} '
-          'with crowding coefficient of {:>5}'.format(0,
-                                                      len(population),
-                                                      round(crowding_effect(population, environment), 4)))
+          'with crowding coefficient of {:6.4f} and average population gene value of {:4.4f}, '
+          'newborn population is:    0'.format(0,
+                                                len(population),
+                                                round(Individual.crowding_effect(population, environment), 4),
+                                                Individual.average_pop_gene_value(population)))
+    Individual.print_alive_individuals_population(population)
     # save the initial population
     for ind in population:
         ind.save_individual(file_path, 0)
@@ -90,18 +94,18 @@ def natural_selection_algorithm(start_pop=10,
             # the chance of replication is delta = chance_child - crowding_effect - 0.2
             # if delta >= 0, then replicate
             # if delta < 0 , then don't replicate
-            if chance_of_child - round(crowding_effect(population, environment), 4) >= 0.1:
+            if chance_of_child - round(Individual.crowding_effect(population, environment), 4) >= 0.1:
                 # if > 0.3, mutate
                 # otherwise, don't
                 random.seed(chance_of_child *
-                            crowding_effect(population, environment) *
+                            Individual.crowding_effect(population, environment) *
                             float(datetime.now().microsecond))
 
                 chance_of_mutation = random.random()
 
                 mutant = copy.copy(ind)
                 if chance_of_mutation >= 0.3:
-                    mutant = ind.mutation(mutant, i)
+                    mutant = ind.mutation(i)
 
                 mutant.generation = i
                 mutant_temp.append(mutant)
@@ -127,10 +131,11 @@ def natural_selection_algorithm(start_pop=10,
 
         # print the current generation
         print('Generation {:>3}, population is {:>4} '
-              'with crowding coefficient of {:6.4f},'
+              'with crowding coefficient of {:6.4f} and average population gene value of {:4.4f}, '
               'newborn population is: {:>4}'.format(i,
                                                     len(population),
-                                                    round(crowding_effect(population, environment), 4),
+                                                    round(Individual.crowding_effect(population, environment), 4),
+                                                    Individual.average_pop_gene_value(population),
                                                     len(mutant_temp)))
 
 
@@ -232,7 +237,7 @@ def visual_analysis_df(file_path='natural_selection_data.csv',
         plt.show()
 
     # show feature average per generation
-    sns.jointplot(data_frame['Generation'], data_frame['Fitness'], data_frame, 'hex',color = 'red')
+    sns.jointplot(data_frame['Generation'], data_frame['Fitness'], data_frame, 'hex', color='red')
     plt.suptitle('Generation vs Fitness Analysis')
     if d_analysis_option == 's':
         plt.savefig('Images/' + file_path[-5] + str(nr_crt) + '_plot.png')
@@ -263,31 +268,14 @@ def visual_analysis_df(file_path='natural_selection_data.csv',
 # actual code
 #######################################################################################################################
 
-# starting variables
-# these will be also gathered from arguments
-nr_ind_start = 10
-nr_generations = 10
-environment = (400, 400)
-nat_selection = False
-d_analysis = False
-d_analysis_option = ''
-file_path = 'natural_selection_data.csv'
-
 # define the class objects
 data_analysis = DataAnalysisModule.DataAnalysisClass()
-nr_ind_start, nr_generations, environment, nat_selection, d_analysis, d_analysis_option, file_path = get_arguments()
+
+nr_ind_start, nr_generations, genes, environment, \
+nat_selection, d_analysis, d_analysis_option, file_path = get_arguments()
 #######################################################################################################################
 # run the natural selection algorithm from the function below
 if nat_selection:
-    # open the .csv and start writing the head of the file
-    with open(file_path, 'w', newline='') as write_obj:
-        # Create a writer object from csv module
-        csv_writer = writer(write_obj)
-        # Add contents of list as last row in the csv file
-        list_of_elem = ['Generation', 'Life_Expectancy', 'Born_Generation', 'Speed', 'Strength', 'Size', 'Visual',
-                        'Auditory', 'Fitness']
-        csv_writer.writerow(list_of_elem)
-
     natural_selection_algorithm(nr_ind_start, nr_generations, environment, file_path)
 
 #######################################################################################################################
