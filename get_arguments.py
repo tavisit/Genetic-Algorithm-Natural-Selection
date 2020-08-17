@@ -25,13 +25,14 @@ def get_arguments():
     # default settings
     nr_ind_start = 10
     nr_generations = 10
-    genes = [-98, -69, -65, -46, 49, 50, 74, 91, 117, 178]
     length = 400
     width = 400
     nat_selection = False
     d_analysis = False
     d_analysis_option = ''
     file_path = ''
+
+
 
     full_cmd_arguments = sys.argv
 
@@ -52,17 +53,17 @@ def get_arguments():
     for current_argument, current_value in arguments:
         if current_argument in ('-h', '--help'):  # help argument is parsed and display information
             print('\n\nStart the program in the following order, where [-c] is optional')
-            print('python Houses_prices.py [-p nr] [-g nr] [-i file] [-l nr] [-w nr] [n] [a opt] -f location_input\n')
+            print('python Houses_prices.py [-p nr] [-g nr] [-l nr] [-w nr] [-n] [-a opt] -f location_input\n')
             print('-p / --pop           | set the initial population, default 10')
             print('-g / --gen           | set the number of generations, default 10')
             print('-l / --length        | set the environment length, default 400')
             print('-w / --width         | set the environment width, default 400')
             print('-n / --nat           | run the natural selection algorithm')
             print('-a / --analysis      | run the data analysis algorithm\n',
-                  ' ' * 19, '| options:\n',
-                  ' ' * 19, '| s -> save plots\n',
-                  ' ' * 19, '| d -> display plots\n',
-                  ' ' * 19, '| sd -> save and display plots')
+                                ' '*19, '| options:\n',
+                                ' '*19, '| s -> save plots\n',
+                                ' '*19, '| d -> display plots\n',
+                                ' '*19, '| sd -> save and display plots')
             print('-f / --file          | input/output file of the data\n\n')
             exit(0)
         elif current_argument in ('-p', '--pop'):  # nr of start individual is set by user
@@ -72,7 +73,7 @@ def get_arguments():
         elif current_argument in ('-l', '--length'):  # environment length set by user
             length = int(current_value)
         elif current_argument in ('-w', '--width'):  # environment width set by user
-            width = int(current_value)
+             width = int(current_value)
         elif current_argument in ('-n', '--nat'):  # user argument is parsed and set the boolean variable
             nat_selection = True
         elif current_argument in ('-a', '--analysis'):  # user argument is parsed and set the boolean variable
@@ -93,7 +94,6 @@ def get_arguments():
         file_path = 'natural_selection_data.csv'
     return_list.append(nr_ind_start)
     return_list.append(nr_generations)
-    return_list.append(genes)
     return_list.append((length, width))
     return_list.append(nat_selection)
     return_list.append(d_analysis)
