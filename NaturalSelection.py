@@ -59,7 +59,6 @@ def natural_selection_algorithm(start_pop=10,
                                                 len(population),
                                                 round(Individual.crowding_effect(population, environment), 4),
                                                 Individual.average_pop_gene_value(population)))
-    Individual.print_alive_individuals_population(population)
     # save the initial population
     for ind in population:
         ind.save_individual(file_path, 0)
