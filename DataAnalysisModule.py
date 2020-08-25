@@ -5,6 +5,8 @@ import numpy as np
 # These are the plotting modules adn libraries we'll use:
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn import preprocessing
+from sklearn.model_selection import cross_val_score
 
 
 class DataAnalysisClass:
@@ -29,7 +31,7 @@ class DataAnalysisClass:
             exit(0)
 
         fig = plt.figure(figsize=(20, 5))
-        plt.suptitle(feature+'Analysis')
+        plt.suptitle(feature + 'Analysis')
         fig.add_subplot(121)
         subtitle = 'Skew is ' + str(data_frame[feature].skew())
         plt.title(subtitle)
@@ -61,13 +63,13 @@ class DataAnalysisClass:
         data_frame_corr = data_frame_numeric_features.corr()
         # take the first 5 best increasing factors and
         # the best indicators of the decrease of the final feature
-        data_frame_pos_features = data_frame_corr[correlation].sort_values(ascending=False)[1:size_ranking]
+        data_frame_pos_features = data_frame_corr[correlation].sort_values(ascending=False)[1:size_ranking + 1]
         data_frame_neg_features = data_frame_corr[correlation].sort_values(ascending=False)[-size_ranking:]
         print(data_frame_pos_features, '\n')
         print(data_frame_neg_features, '\n\n')
 
-        fig = plt.figure(figsize=(10, 10))
-        plt.suptitle('Overall Features: Their correlation with the '+correlation)
+        fig = plt.figure(figsize=(10, 5))
+        plt.suptitle('Overall Features: Their correlation with the ' + correlation)
         fig.add_subplot(121)
         plt.plot(data_frame_pos_features)
         plt.xticks(rotation=90)
@@ -104,8 +106,63 @@ class DataAnalysisClass:
 
         return plt
 
+    # This function prints the composition of unique values and their datatypes
+    # From the data frame
+    #
+    # Arguments:
+    # - data_frame represents the data frame
+    #
+    # returns nothing
+    @staticmethod
+    def print_composition_dataframe(data_frame):
+        print(data_frame.info())
+        print('\n\n')
+        for i in range(11):
+            out_string = '{:>30}: {:>5}, with type: {}'.format(data_frame.columns[i],
+                                                               str(data_frame[data_frame.columns[i]].nunique()),
+                                                               type(data_frame[data_frame.columns[i]][0]))
+            print(out_string)
+
+    # This function cleans the data frame of null values
+    #
+    # Arguments:
+    # - data_frame represents the data frame
+    #
+    # returns the data_frame
     @staticmethod
     def clean_dataset(data_frame):
         data_frame.dropna(inplace=True)
         indices_to_keep = ~data_frame.isin([np.nan, np.inf, -np.inf]).any(1)
-        return data_frame[indices_to_keep].astype(np.float64)
+        return data_frame[indices_to_keep]
+
+    # This function fills the data frame from null values
+    #
+    # Arguments:
+    # - data_frame represents the data frame
+    # - feature that needs to be analysed
+    #
+    # returns the data_frame
+    @staticmethod
+    def fill_data_set(data_frame, feature):
+
+        if data_frame[feature].dtype == 'object':
+            data_frame[feature] = data_frame[feature].fillna(data_frame[feature].mode()[0])
+        else:
+            data_frame[feature] = data_frame[feature].fillna(data_frame[feature].mean())
+
+        return data_frame
+
+    # This function encodes the str states into float types
+    #
+    # Arguments:
+    # - data_frame represents the data frame
+    # - feature that needs to be analysed
+    #
+    # returns the data_frame
+    @staticmethod
+    def label_encoder_array(data_frame, array_features):
+        le = preprocessing.LabelEncoder()
+        for i in array_features:
+            data_frame[i] = le.fit_transform(data_frame[i])
+
+        return data_frame
